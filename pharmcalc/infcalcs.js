@@ -6,7 +6,12 @@ var infusionChart = Highcharts.chart('container', {
     },
     title: {
         text: 'Infusion Progress',
-        align: 'left'
+        align: 'center',
+        style: {
+            fontSize: '1.3rem', // Match Bootstrap's h5 size
+            fontWeight: 'bold',  // Optional: Adjust weight if needed
+            fontFamily: 'inherit' // Optional: Match page font
+        }
     },
     xAxis: [{
         type: 'datetime',
@@ -31,7 +36,7 @@ var infusionChart = Highcharts.chart('container', {
     }],
     yAxis: [{ // Primary yAxis
         labels: {
-            format: '{value} mLs',
+            format: '{value} mL',
             style: {
                 color: Highcharts.getOptions().colors[1]
             }
@@ -50,7 +55,7 @@ var infusionChart = Highcharts.chart('container', {
             }
         },
         labels: {
-            format: '{value} mLs/hr',
+            format: '{value} mL/hr',
             style: {
                 color: Highcharts.getOptions().colors[0]
             }
@@ -58,7 +63,8 @@ var infusionChart = Highcharts.chart('container', {
         opposite: true
     }],
     tooltip: {
-        shared: true
+        shared: true,
+        headerFormat: ''
     },
     legend: {
         align: 'left',
@@ -84,7 +90,7 @@ var infusionChart = Highcharts.chart('container', {
             [16200000, 340]
         ],
         tooltip: {
-            valueSuffix: ' mm'
+            valueSuffix: ' mL'
         }
 
     }, {
@@ -103,12 +109,17 @@ var infusionChart = Highcharts.chart('container', {
             [16200000, 126]
         ],
         tooltip: {
-            valueSuffix: '°C'
+            valueSuffix: ' mL/hr'
         }
     }]
 });
 
-document.getElementById("calculate").addEventListener("click", function() {
+function redraw() {
+
+    const hasInvalidField = document.querySelector('.invalid-field') !== null;
+    if (hasInvalidField) {
+        return;
+    }
 
     // read as floats (error handling ? later)
     var initialRate = parseFloat(document.getElementById("inputInitialRate").value);
@@ -158,5 +169,45 @@ document.getElementById("calculate").addEventListener("click", function() {
     console.log(volumeData);
     console.log(rateData);
 
+}
 
+function validateInput(inputFieldId) {
+    const inputField = document.getElementById(inputFieldId);
+    const inputValue = inputField.value;
+
+    // Check if the input is a valid float
+    const isValidFloat = !isNaN(parseFloat(inputValue)) && isFinite(inputValue);
+
+    if (isValidFloat) {
+      // Remove the invalid class if the input is a valid float
+      inputField.classList.remove('invalid-field');
+    } else {
+      // Add the invalid class to color the field light red if the input is not a valid float
+      inputField.classList.add('invalid-field');
+    }
+
+    redraw();
+    return isValidFloat;
+}
+
+// Run and add the five listeners
+validateInput('inputInitialRate')
+document.getElementById('inputInitialRate').addEventListener('input', function() {
+    validateInput('inputInitialRate');
+});
+validateInput('inputMaxRate')
+document.getElementById('inputMaxRate').addEventListener('input', function() {
+    validateInput('inputMaxRate');
+});
+validateInput('inputStepSize')
+document.getElementById('inputStepSize').addEventListener('input', function() {
+    validateInput('inputStepSize');
+});
+validateInput('inputStepTime')
+document.getElementById('inputStepTime').addEventListener('input', function() {
+    validateInput('inputStepTime');
+});
+validateInput('inputTargetTotal')
+document.getElementById('inputTargetTotal').addEventListener('input', function() {
+    validateInput('inputTargetTotal');
 });

@@ -9,15 +9,28 @@
     height: 400px;
 }
 
-#graph-div {
-    padding-right: 150px;
+#input-list {
+    padding-top: 20px;
 }
 
 header {
     padding: 1em; 
+    background-color: #ebebeb;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+main {
+    flex: 1; /* Ensures main content takes up available space */
 }
 
 footer {
+    background-color: #ebebeb;
+    text-align: left;
     padding: 1em;
 }
 
@@ -76,4 +89,13 @@ input[readonly] {
     background-color: #f0f0f0;  /* Light gray background */
     font-weight: bold;  /* Bold text */
     border-color: #ccc;  /* Light gray border */
-  }
+}
+
+.form-group {
+    padding-bottom: 5px;
+}
+
+.invalid-field {
+    background-color: #ffdcdf;  /* Light red background */
+    border-color: #ff6c7b;  /* Light red border */
+}
