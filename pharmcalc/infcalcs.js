@@ -2,7 +2,8 @@ var infusionChart = Highcharts.chart('container', {
     chart: {
         zooming: {
             type: 'xy'
-        }
+        },
+        backgroundColor: '#FCFCFF', // Set the background color here
     },
     title: {
         text: 'Infusion Progress',
@@ -28,34 +29,37 @@ var infusionChart = Highcharts.chart('container', {
         },
         labels: {
             formatter: function () {
-              // Format the labels to show only the time (HH:MM)
-              return Highcharts.dateFormat('%k:%M', this.value);
-              // %H, %M vs. $k, $l to drop leading zeros
+                const milliseconds = this.value; 
+                const daysPastEpoch = Math.floor(milliseconds / (1000 * 60 * 60 * 24)) + 1; // Convert to days
+                if (daysPastEpoch > 1)
+                    return `Day ` + daysPastEpoch + ', ' + Highcharts.dateFormat('%k:%M', this.value);
+                return Highcharts.dateFormat('%k:%M', this.value);
+                // %H, %M vs. $k, $l to drop leading zeros
             }
         }
     }],
     yAxis: [{ // Primary yAxis
         labels: {
-            format: '{value} mL',
+            format: '{value} mL/hr',
             style: {
                 color: Highcharts.getOptions().colors[1]
             }
         },
         title: {
-            text: 'Amount Infused',
+            text: 'Infusion Rate',
             style: {
                 color: Highcharts.getOptions().colors[1]
             }
         }
     }, { // Secondary yAxis
         title: {
-            text: 'Infusion Rate',
+            text: 'Volume Infused',
             style: {
                 color: Highcharts.getOptions().colors[0]
             }
         },
         labels: {
-            format: '{value} mL/hr',
+            format: '{value} mL',
             style: {
                 color: Highcharts.getOptions().colors[0]
             }
@@ -69,6 +73,7 @@ var infusionChart = Highcharts.chart('container', {
     legend: {
         align: 'left',
         verticalAlign: 'top',
+        reversed: true,
         backgroundColor:
             Highcharts.defaultOptions.legend.backgroundColor || // theme
             'rgba(255,255,255,0.25)'
@@ -114,6 +119,38 @@ var infusionChart = Highcharts.chart('container', {
     }]
 });
 
+// Hide hour/day box on empty hour/day
+function hideEmptyFields() {
+    const dayOutText = document.getElementById('dayout').innerText;
+    const hourOutText = document.getElementById('hourout').innerText;
+    const hiddenValues = ["?", "0", "", " "];
+
+    var dayVisibility = hiddenValues.includes(dayOutText) ? 'hidden' : 'visible'
+    var elements = document.querySelectorAll('.daybox');
+    elements.forEach(element => {
+        element.style.visibility = dayVisibility; 
+    });
+
+    var hourVisibility = hiddenValues.includes(hourOutText) ? 'hidden' : 'visible'
+    elements = document.querySelectorAll('.hourbox');
+    elements.forEach(element => {
+        element.style.visibility = hourVisibility; 
+    });
+
+    console.log(dayOutText + dayVisibility + hourOutText + hourVisibility);
+}
+
+function revealFields() {
+    var elements = document.querySelectorAll('.daybox');
+    elements.forEach(element => {
+        element.style.visibility = 'visible'; 
+    });
+    elements = document.querySelectorAll('.hourbox');
+    elements.forEach(element => {
+        element.style.visibility = 'visible'; 
+    });
+}
+
 function redraw() {
 
     const hasInvalidField = document.querySelector('.invalid-field') !== null;
@@ -129,26 +166,38 @@ function redraw() {
     var targetTotal = parseFloat(document.getElementById("inputTargetTotal").value);
 
     // alert("Button clicked!" + initialRate + maxRate + stepSize + stepTime + targetTotal);
-
     var times = [0];
     var rates = [initialRate];
     var volus = [0];
     var vt = 0;
+    
+    const maxloops = 5000;
+    var loops = 0;
 
     // Step through until we hit the target
-    while (vt < targetTotal) { 
+    while (vt < targetTotal && loops < maxloops) { 
         vt += rates.at(-1) * stepTime;
         times.push(times[times.length - 1] + stepTime);
         rates.push(Math.min(maxRate, rates[rates.length - 1] + stepSize));
         volus.push(vt);
+        loops += 1
+    }
+
+    if (loops >= maxloops) {
+        alert("Maximum infusion increases reached (5000), recheck numbers");
+        return;
     }
 
     // Walk back to find exact time
+    revealFields();
     var finalTime = times.at(-1) - ((vt - targetTotal) / rates.at(-1));
-    var outputHourElem = document.getElementById("outputHour");
-    var outputMinElem = document.getElementById("outputMinute");
-    outputHourElem.placeholder = Math.floor(finalTime);
-    outputMinElem.placeholder = Math.floor((finalTime - Math.floor(finalTime)) * 60);
+    var outputDayElem = document.getElementById("dayout");
+    var outputHourElem = document.getElementById("hourout");
+    var outputMinElem = document.getElementById("minout");
+    outputHourElem.textContent = Math.floor(finalTime % 24);
+    outputMinElem.textContent = Math.floor((finalTime - Math.floor(finalTime)) * 60);
+    outputDayElem.textContent = Math.floor(finalTime / 24);
+    hideEmptyFields();
 
     // Update graph
     console.log(stepTime);
@@ -166,27 +215,18 @@ function redraw() {
 
     infusionChart.redraw();
 
-    console.log(volumeData);
-    console.log(rateData);
-
 }
 
 function validateInput(inputFieldId) {
     const inputField = document.getElementById(inputFieldId);
     const inputValue = inputField.value;
-
-    // Check if the input is a valid float
     const isValidFloat = !isNaN(parseFloat(inputValue)) && isFinite(inputValue);
 
     if (isValidFloat) {
-      // Remove the invalid class if the input is a valid float
       inputField.classList.remove('invalid-field');
     } else {
-      // Add the invalid class to color the field light red if the input is not a valid float
       inputField.classList.add('invalid-field');
     }
-
-    redraw();
     return isValidFloat;
 }
 
@@ -194,20 +234,29 @@ function validateInput(inputFieldId) {
 validateInput('inputInitialRate')
 document.getElementById('inputInitialRate').addEventListener('input', function() {
     validateInput('inputInitialRate');
+    redraw();
 });
 validateInput('inputMaxRate')
 document.getElementById('inputMaxRate').addEventListener('input', function() {
     validateInput('inputMaxRate');
+    redraw();
 });
 validateInput('inputStepSize')
 document.getElementById('inputStepSize').addEventListener('input', function() {
     validateInput('inputStepSize');
+    redraw();
 });
 validateInput('inputStepTime')
 document.getElementById('inputStepTime').addEventListener('input', function() {
     validateInput('inputStepTime');
+    redraw();
 });
 validateInput('inputTargetTotal')
 document.getElementById('inputTargetTotal').addEventListener('input', function() {
     validateInput('inputTargetTotal');
+    redraw();
 });
+
+// Redraw
+redraw();
+hideEmptyFields();

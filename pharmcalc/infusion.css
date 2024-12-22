@@ -1,47 +1,78 @@
 .highcharts-figure,
 .highcharts-data-table table {
-    min-width: 310px;
-    max-width: 800px;
-    margin: 1em auto;
+
+    flex: 1;
+    display: flex;
+    overflow: auto;
+    margin: 1em;
+    min-height: 500px;
+}
+
+#graph-div {
+    display: flex; 
+    flex-direction: column;
 }
 
 #container {
-    height: 400px;
+    flex: 1;
+    display: flex;
+    overflow: auto;
+    min-height: 500px;
+
 }
 
 #input-list {
     padding-top: 20px;
 }
 
+#main-columns {
+    width: 100%;
+}
+
+#daybox {
+    visibility: hidden;
+}
+
 header {
     padding: 1em; 
-    background-color: #ebebeb;
+    background-color: #D8EEFD;
 }
 
 body {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; 
     min-height: 100vh;
+    height: 100%;
     margin: 0;
+    background-color: #FCFCFF;
 }
+
 main {
-    flex: 1; /* Ensures main content takes up available space */
+    flex: 1;
+    display: flex;
+    overflow: auto;
+    width: 100%;
 }
 
 footer {
-    background-color: #ebebeb;
+    background-color: #D8EEFD   ;
     text-align: left;
     padding: 1em;
+}
+
+.output {
+    font-size: x-large;
+    padding-right: 0px;
 }
 
 .highcharts-data-table table {
     font-family: Verdana, sans-serif;
     border-collapse: collapse;
-    border: 1px solid #ebebeb;
+    border: 1px solid #D0DDD4;
     margin: 10px auto;
     text-align: center;
     width: 100%;
-    max-width: 500px;
+    /* max-width: 500px; */
 }
 
 .highcharts-data-table caption {
@@ -99,3 +130,8 @@ input[readonly] {
     background-color: #ffdcdf;  /* Light red background */
     border-color: #ff6c7b;  /* Light red border */
 }
+
+.highcharts-background, .highcharts-root, .highcharts-container {
+    max-height: 100%;
+    max-width: 100%;
+  }
