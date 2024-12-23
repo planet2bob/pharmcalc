@@ -80,7 +80,8 @@ var infusionChart = Highcharts.chart('container', {
     },
     series: [{
         name: 'Volume Infused',
-        type: 'column',
+        type: 'areaspline',
+        animationLimit: 250,
         yAxis: 1,
         data: [
             [0, 0],
@@ -101,6 +102,7 @@ var infusionChart = Highcharts.chart('container', {
     }, {
         name: 'Infusion Rate',
         type: 'spline',
+        animationLimit: 250,
         data: [
             [0, 15],
             [1800000, 30.5],

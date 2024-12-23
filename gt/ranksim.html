@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- some rip from 
+    https://jsfiddle.net/gh/get/jquery/1.9.1/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/column-basic/ 
+ 
+ -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,
+                                   initial-scale=1.0">
+    <title>Ranked Climb Sim</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../icon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../icon/favicon-16x16.png">
+    <link rel="manifest" href="../icon/site.webmanifest">
+
+    <!-- css imports: normalize, boostrap -->
+    <link rel="stylesheet" href="../normalize.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="ranksim.css">
+
+    <!-- js imports: popper, boostrap, highcharts-->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>
+            <strong>Ranked Climb Sim</strong> (league of legends)
+        </h1>
+        <h4>
+            Repo: <a href="https://github.com/planet2bob/planet2bob.github.io">planet2bob.github.io/gt</a>
+        </h4>
+    </header>
+    <main>
+        <div class="text-center row no-gutters" id="main-columns">
+            <div class="col-xl-4" id="input-list">
+                <h5><strong>Inputs</strong></h5>
+                    <div class="form-group row">
+                        <label style="text-align:right" for="initialRank" class="col-3 col-form-label">Initial Rank</label>
+                        <div class="col-6">
+                            <select class="form-select form-select" id="initialRank">
+                                <option selected>Select Rank</option>
+                                <option value="0">Iron</option>
+                                <option value="1">Bronze</option>
+                                <option value="2">Silver</option>
+                                <option value="3">Gold</option>
+                                <option value="4">Platinum</option>
+                                <option value="5">Emerald</option>
+                                <option value="6">Diamond</option>
+                                <option value="7">Master</option>
+                                <option value="8">Grandmaster</option>
+                                <option value="9">Challenger</option>
+                              </select>
+                        </div>
+                        <label style="text-align:left" class="col-2">
+                            <select class="form-select form-select" id="initialDivision">
+                                <option selected>Div</option> 
+                                <!-- values are increasing with skill, confusing as it is -->
+                                <option value="1">4</option> 
+                                <option value="2">3</option>
+                                <option value="3">2</option>
+                                <option value="4">1</option>
+                              </select>
+                        </label>
+                    </div>
+
+                    <div class="form-group row">
+                        <label style="text-align:right"  for="trueRank" class="col-3 col-form-label">True Rank</label>
+                        <div class="col-6">
+                            <select class="form-select form-select" id="trueRank">
+                                <option selected>Select Rank</option>
+                                <option value="0">Iron</option>
+                                <option value="1">Bronze</option>
+                                <option value="2">Silver</option>
+                                <option value="3">Gold</option>
+                                <option value="4">Platinum</option>
+                                <option value="5">Emerald</option>
+                                <option value="6">Diamond</option>
+                                <option value="7">Master</option>
+                                <option value="8">Grandmaster</option>
+                                <option value="9">Challenger</option>
+                              </select>
+                        </div>
+                        <label style="text-align:left" class="col-2">
+                            <select class="form-select form-select" id="trueDivision">
+                                <option selected>Div</option> 
+                                <!-- values are increasing with skill, confusing as it is -->
+                                <option value="1">4</option> 
+                                <option value="2">3</option>
+                                <option value="3">2</option>
+                                <option value="4">1</option>
+                              </select>
+                        </label>
+                    </div>
+
+                    <div class="form-group row" id="step-size">
+                        <label style="text-align:right" for="inputStepSize" class="col-3 col-form-label">Target Rank</label>
+                        <div class="col-6">
+                            <select class="form-select form-select" id="targetRank">
+                                <option selected>Select Rank</option>
+                                <option value="0">Iron</option>
+                                <option value="1">Bronze</option>
+                                <option value="2">Silver</option>
+                                <option value="3">Gold</option>
+                                <option value="4">Platinum</option>
+                                <option value="5">Emerald</option>
+                                <option value="6">Diamond</option>
+                                <option value="7">Master</option> 
+                                <option value="8">Grandmaster</option>
+                                <option value="9">Challenger</option>
+                              </select>
+                        </div>
+                        <label style="text-align:left" class="col-2">
+                            <select class="form-select form-select" id="targetDivision">
+                                <option selected>Div</option> 
+                                <!-- values are increasing with skill, confusing as it is -->
+                                <option value="1">4</option> 
+                                <option value="2">3</option>
+                                <option value="3">2</option>
+                                <option value="4">1</option>
+                              </select>
+                        </label>
+                    </div>
+
+                    <div class="form-group row" id="step-time">
+                        <label style="text-align:right" for="hourInput" class="col-3 col-form-label">Time per Week</label>
+                        <div class="col-6">
+                            <input type="number" class="form-control" id="hourInput" placeholder="10">
+                        </div>
+                        <label style="text-align:left" class="col-2 col-form-label">hours</label>
+                    </div>
+
+                    &nbsp;
+
+                    <div class="row">
+                        <div class="col-5"></div>
+                        <div class="col-4 text-end">
+                            Simulate For: &#8195 
+                            <button class="btn btn-secondary" id="simWeek">Run It</button>
+                        </div>
+                        <div class="col-2 text-start">
+                            <button class="btn btn-primary" id="simRest">Until Target</button>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-3 " style="text-align:right">Current Winrate</div>
+                        <div class="col-6 output" id = "wrout" style="text-align:right">?</div>
+                        <div class="col-2 output" style="text-align:left">%</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 " style="text-align:right">Current LP</div>
+                        <div class="col-6 output" id = "lpout" style="text-align:right">?</div>
+                        <div class="col-2 output" style="text-align:left"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 " style="text-align:right">Current MMR</div>
+                        <div class="col-6 output" id = "mmrout" style="text-align:right">?</div>
+                        <div class="col-2 output" style="text-align:left"></div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-3 " style="text-align:right">Total Time</div>
+                        <div class="col-2 output daybox" id="dayout" style="text-align:right">?</div>
+                        <div class="col-1 output daybox" style="text-align:left">days</div>
+                        <div class="col-1 output hourbox" id="hourout" style="text-align:right">?</div>
+                        <div class="col-1 output hourbox" style="text-align:left">hrs</div>
+                        <div class="col-1 output" id = "minout" style="text-align:right">?</div>
+                        <div class="col-2 output" style="text-align:left">min</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 " style="text-align:right">Games Played</div>
+                        <div class="col-6 output" id = "gamesout" style="text-align:right">?</div>
+                        <div class="col-2 output" style="text-align:left">games</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 " style="text-align:right">Weeks Elapsed</div>
+                        <div class="col-6 output" id = "weeksout" style="text-align:right">?</div>
+                        <div class="col-2 output" style="text-align:left">weeks</div>
+                    </div>
+
+                    <hr>
+
+                    <div class="text-start" id="history" style="text-align:left">
+                        <!-- fix this with padding later -->
+                        &#8195 Match History:
+                    </div>
+
+                </div>
+                <div class="col-xl-8" id="graph-div">
+                    <figure class="highcharts-figure">
+                        <div id="container"></div>
+                    </figure>
+            </div>
+          </div>
+        </div>
+    </main>
+    <footer>
+        <p>Other Calculators: Work in Progress</p>
+    </footer>
+
+    <!-- js runtime -->
+    <script src="rankcalcs.js"></script>
+</body>
+
+</html>

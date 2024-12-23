@@ -1,0 +1,137 @@
+.highcharts-figure,
+.highcharts-data-table table {
+
+    flex: 1;
+    display: flex;
+    overflow: auto;
+    margin: 1em;
+    min-height: 500px;
+}
+
+#graph-div {
+    display: flex; 
+    flex-direction: column;
+}
+
+#container {
+    flex: 1;
+    display: flex;
+    overflow: auto;
+    min-height: 500px;
+
+}
+
+#input-list {
+    padding-top: 20px;
+}
+
+#main-columns {
+    width: 100%;
+}
+
+#daybox {
+    visibility: hidden;
+}
+
+header {
+    padding: 1em; 
+    background-color: #D8EEFD;
+}
+
+body {
+    display: flex;
+    flex-direction: column; 
+    min-height: 100vh;
+    height: 100%;
+    margin: 0;
+    background-color: #FCFCFF;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    overflow: auto;
+    width: 100%;
+}
+
+footer {
+    background-color: #D8EEFD   ;
+    text-align: left;
+    padding: 1em;
+}
+
+.output {
+    font-size: x-large;
+    padding-right: 0px;
+}
+
+.highcharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #D0DDD4;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    /* max-width: 500px; */
+}
+
+.highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.highcharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+    padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+    background: #f1f7ff;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
+
+.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+  
+    > .col,
+    > [class*="col-"] {
+      padding-right: 0;
+      padding-left: 0;
+    }
+}
+
+input[readonly] {
+    background-color: #f0f0f0;  /* Light gray background */
+    font-weight: bold;  /* Bold text */
+    border-color: #ccc;  /* Light gray border */
+}
+
+.form-group {
+    padding-bottom: 5px;
+}
+
+.invalid-field {
+    background-color: #ffdcdf;  /* Light red background */
+    border-color: #ff6c7b;  /* Light red border */
+}
+
+.highcharts-background, .highcharts-root, .highcharts-container {
+    max-height: 100%;
+    max-width: 100%;
+  }
